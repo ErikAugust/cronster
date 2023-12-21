@@ -8,10 +8,12 @@ import createError from 'http-errors';
 import 'reflect-metadata';
 
 import { indexRouter } from './routes/index';
+import { signupRouter } from './routes/signup';
+
 import { apiSubscriptionsRouter } from './routes/api/subscriptions';
+import { apiUsersRouter } from './routes/api/users';
 
 import { AppDataSource } from './app-data-source';
-import { apiUsersRouter } from './routes/api/users';
 
 dotenv.config();
 
@@ -44,6 +46,7 @@ async function startServer() {
   app.use(express.static(path.join(__dirname, '../public')));
   
   app.use('/', indexRouter);
+  app.use('/signup', signupRouter);
   app.use('/api/subscriptions', apiSubscriptionsRouter);
   app.use('/api/users', apiUsersRouter);
 
@@ -60,7 +63,7 @@ async function startServer() {
     if (request.originalUrl.startsWith('/api')) {
       return response.json({ message: error.message });
     } else {
-      return response.render('error', { ...error });
+      return response.render('error', { status: error.status.toString(), message: error.message });
     }
   });
   
