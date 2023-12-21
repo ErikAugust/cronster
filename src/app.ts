@@ -11,6 +11,7 @@ import { indexRouter } from './routes/index';
 import { apiSubscriptionsRouter } from './routes/api/subscriptions';
 
 import { AppDataSource } from './app-data-source';
+import { apiUsersRouter } from './routes/api/users';
 
 dotenv.config();
 
@@ -44,6 +45,7 @@ async function startServer() {
   
   app.use('/', indexRouter);
   app.use('/api/subscriptions', apiSubscriptionsRouter);
+  app.use('/api/users', apiUsersRouter);
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
