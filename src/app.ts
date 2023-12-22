@@ -14,6 +14,8 @@ import { apiSubscriptionsRouter } from './routes/api/subscriptions';
 import { apiUsersRouter } from './routes/api/users';
 
 import { AppDataSource } from './app-data-source';
+import { loginRouter } from './routes/login';
+import { apiLoginRouter } from './routes/api/login';
 
 dotenv.config();
 
@@ -47,8 +49,10 @@ async function startServer() {
   
   app.use('/', indexRouter);
   app.use('/signup', signupRouter);
+  app.use('/login', loginRouter);
   app.use('/api/subscriptions', apiSubscriptionsRouter);
   app.use('/api/users', apiUsersRouter);
+  app.use('/api/login', apiLoginRouter);
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
@@ -63,7 +67,7 @@ async function startServer() {
     if (request.originalUrl.startsWith('/api')) {
       return response.json({ message: error.message });
     } else {
-      return response.render('error', { status: error.status.toString(), message: error.message });
+      return response.render('error', { title: error.status.toString(), status: error.status.toString(), message: error.message });
     }
   });
   

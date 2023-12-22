@@ -23,6 +23,7 @@
     "http-errors": "^2.0.0",
     "is-email": "^1.0.2",
     "jsonwebtoken": "^9.0.2",
+    "moment": "^2.29.4",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "reflect-metadata": "^0.2.1",

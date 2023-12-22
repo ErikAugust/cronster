@@ -279,6 +279,16 @@ p, ul, ol, .form-group{
 	margin:20px 0;
 }
 
+.logo-splash {
+  text-align: center;
+}
+
+.logo-splash .logo {
+  font-style: italic;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
 /*! Form placeholders */
 
 .form-control::-webkit-input-placeholder{

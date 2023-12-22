@@ -7,6 +7,7 @@ import {
   emailExists,
   usernameExists,
   hashPassword,
+  formatUsername
 } from '../../shared/user';
 
 import { generateToken } from '../../shared/jwt';
@@ -48,7 +49,7 @@ apiUsersRouter.post('/', async (req: Request, res: Response, next: NextFunction)
     // Create user:
     const user = new User();
     user.email = email;
-    user.username = username;
+    user.username = formatUsername(username);
     user.password = hashedPassword;
     user.createdAt = new Date();
     await user.save();

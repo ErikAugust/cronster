@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany } from 'typeorm';
+import { Cron } from './cron.entity';
 
 @Entity('Users')
 export class User extends BaseEntity {
@@ -28,4 +29,13 @@ export class User extends BaseEntity {
 
     @Column({ default: false })
     removed?: boolean;
+
+    @Column({ nullable: true })
+    image?: string;
+
+    @Column({ nullable: true })
+    backgroundImage?: string;
+
+    @OneToMany(() => Cron, (cron) => cron.user)
+    crons?: Cron[]
 }
