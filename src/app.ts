@@ -6,6 +6,7 @@ import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import createError from 'http-errors';
 import 'reflect-metadata';
+import cors from 'cors';
 
 import { indexRouter } from './routes/index';
 import { signupRouter } from './routes/signup';
@@ -41,6 +42,7 @@ async function startServer() {
   app.set('views', path.join(__dirname, '../views'));
   app.set('view engine', 'hbs');
   
+  app.use(cors());
   app.use(logger('dev'));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));

@@ -11,7 +11,7 @@ export const apiLoginRouter = express.Router();
  */
 apiLoginRouter.post('/', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    let { emailOrUsername, password } = req.body;
+    let { emailOrUsername, password } = req.body.user;
 
     let user = await getByEmailOrUsername(emailOrUsername);
     if (!user) return next(createError(400, 'User not found.'));
@@ -22,7 +22,15 @@ apiLoginRouter.post('/', async (req: Request, res: Response, next: NextFunction)
       // Generate JWT:
       const token = generateToken({ id: user.id, email: user.email }, '60d');
 
-      res.json({ message: 'User logged in successfully.', token, success: true });
+      res.json({ 
+        message: 'User logged in successfully.',
+        user: {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          token
+        }
+    });
     } else {
       return next(createError(404, 'Incorrect username/email and/or password.'));
     }
