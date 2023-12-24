@@ -14,15 +14,15 @@ void async function () {
   if (!user) throw new Error('User not found');
 
   const cron = Cron.create({
-    title: '2015 Vermont 50K',
+    title: 'Christmas 2023',
     createdAt: new Date(),
-    datetime: '2015-09-27 07:00:00',
-    image: 'https://pbs.twimg.com/profile_images/1680597835492782081/6DJ_twnf_400x400.jpg',
-    description: `1st Place Overall with a time of 4:37:22.`,
+    datetime: '2023-12-25 03:00:00',
+    image: 'https://res.cloudinary.com/dlbanxk4a/image/upload/v1703423148/mm4akgwb8ltrfzcmenwq.png',
+    description: `A count down to Christmas (on the West Coast)!`,
     active: true,
     deleted: false,
     public: true,
-    slug: '2015-vermont-50',
+    slug: 'christmas-2023',
     user: user
   });
 

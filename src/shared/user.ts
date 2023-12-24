@@ -13,6 +13,12 @@ export async function verifyPassword(password: string | undefined, hash: string 
   return await bcrypt.compare(password, hash);
 }
 
+export async function getById(id: number, properties: any) {
+  return await User.findOne({
+    select: properties,
+    where: { id }
+  });
+}
 
 export function checkPasswordStrength(password: string) {
   return passwordStrength(password).id;

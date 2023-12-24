@@ -13,10 +13,13 @@ import { signupRouter } from './routes/signup';
 
 import { apiSubscriptionsRouter } from './routes/api/subscriptions';
 import { apiUsersRouter } from './routes/api/users';
+import { apiCronsRouter } from './routes/api/crons';
 
 import { AppDataSource } from './app-data-source';
 import { loginRouter } from './routes/login';
 import { apiLoginRouter } from './routes/api/login';
+import { strategy } from './shared/jwt';
+import passport from 'passport';
 
 dotenv.config();
 
@@ -24,6 +27,7 @@ async function startServer() {
   await AppDataSource.initialize();
   const app: Express = express();
   const port = process.env.PORT || 3000;
+  passport.use('jwt', strategy);
 
   // view engine setup
   app.engine('hbs', hbs({
@@ -44,8 +48,8 @@ async function startServer() {
   
   app.use(cors());
   app.use(logger('dev'));
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: false }));
+  app.use(express.json({limit: '50mb'}));
+  app.use(express.urlencoded({ extended: true, limit: '50mb' }));
   app.use(cookieParser());
   app.use(express.static(path.join(__dirname, '../public')));
   
@@ -54,6 +58,7 @@ async function startServer() {
   app.use('/login', loginRouter);
   app.use('/api/subscriptions', apiSubscriptionsRouter);
   app.use('/api/users', apiUsersRouter);
+  app.use('/api/crons', apiCronsRouter);
   app.use('/api/login', apiLoginRouter);
 
   // catch 404 and forward to error handler

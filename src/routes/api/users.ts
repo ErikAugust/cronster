@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import createError from 'http-errors';
+import passport from 'passport';
 import { User } from '../../entity/user.entity';
 
 import {
@@ -7,12 +8,42 @@ import {
   emailExists,
   usernameExists,
   hashPassword,
-  formatUsername
+  formatUsername,
+  getById
 } from '../../shared/user';
 
 import { generateToken } from '../../shared/jwt';
 
+export interface UserRequest extends Request {
+  user?: {
+    id?: number;
+  };
+}
+
 export const apiUsersRouter = express.Router();
+
+apiUsersRouter.get('/me', passport.authenticate('jwt', { session: false }), async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return next(createError(400, 'User is not set'));
+
+    // Get user from database: 
+    const user = await getById(userId, { username: true, email: true, createdAt: true });
+
+    res.json({
+      success: true,
+      user: {
+        ...user,
+        token: req.headers.authorization?.replace('Bearer ', '')
+      } 
+    
+    });
+  } catch (error: any) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 /**
  * POST /api/users
