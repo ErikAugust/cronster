@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 import createError from 'http-errors';
 
-import { createCron, getCronsByUserId } from '../../shared/cron';
+import { createCron, getCronsByUserId, deleteCron } from '../../shared/cron';
 import { uploadDataUrl } from '../../shared/image';
 import { User } from '../../entity/user.entity';
 
@@ -26,6 +26,30 @@ apiCronsRouter.get('/me', passport.authenticate('jwt', { session: false }), asyn
   } catch (error: any) {
     console.log(error);
     res.status(500).json({ message: error.message });
+  }
+});
+
+apiCronsRouter.delete('/:id', passport.authenticate('jwt', { session: false }), async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return next(createError(401));
+
+    const id = parseInt(req.params.id);
+    if (!id) return next(createError(400));
+
+    const result = await deleteCron(id, userId);
+    if (result.affectedRows === 0) return next(createError(404));
+
+    if (result.affectedRows >= 1) {
+      res.json({
+        success: true,
+        message: 'Cron deleted successfully.'
+      });
+    }
+
+  } catch (error: any) {
+    console.log(error);
+    return next(createError(500, error.message));
   }
 });
 

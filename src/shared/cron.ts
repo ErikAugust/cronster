@@ -12,6 +12,10 @@ interface CreateCronInterface {
   slug: string;
 }
 
+export async function deleteCron(id: number, userId: number) {
+  return await Cron.query(`UPDATE Crons SET deleted = 1 WHERE id = ${id} AND userId = ${userId}`);
+}
+
 export async function createCron(cron: CreateCronInterface, user: User) {
   return await Cron.create({
     ...cron,
