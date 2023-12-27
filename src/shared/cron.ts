@@ -27,20 +27,18 @@ export async function createCron(cron: CreateCronInterface, user: User) {
   }).save();
 }
 
-export async function getCronBySlug(slug: string, userId: number, isPublic: boolean = true) {
-  const results = await Cron.query(`SELECT * FROM Crons WHERE slug = '${slug}' AND public = ${isPublic} AND userId = ${userId}`);
-
-  if (results.length === 0) {
-    return null;
-  }
-  return results[0];
+export async function getCronById(id: number, userId: number): Promise<Cron | null> {
+  const cron = await Cron.findOne({ where: { id, user: { id: userId } }});
+  return cron || null;
 }
 
-export async function getCronsByUserId(userId: number) {
-  const results = await Cron.query(`SELECT * FROM Crons WHERE userId = ${userId} AND deleted = 0 ORDER BY createdAt DESC`);
+export async function getCronBySlug(slug: string, userId: number, isPublic: boolean = true) {
+  const results = await Cron.findOne({ relations: { user: true }, where: { slug, user: { id: userId }, public: isPublic, deleted: false }});
 
-  if (results.length === 0) {
-    return [];
-  }
-  return results;
+  return results || null;
+}
+
+export async function getCronsByUserId(userId: number): Promise<Cron[]> {
+  const results = await Cron.find({ where: { user: { id: userId }, deleted: false }});
+  return results || [];
 }

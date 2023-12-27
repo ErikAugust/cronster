@@ -14,7 +14,7 @@ apiLoginRouter.post('/', async (req: Request, res: Response, next: NextFunction)
     let { emailOrUsername, password } = req.body.user;
 
     let user = await getByEmailOrUsername(emailOrUsername);
-    if (!user) return next(createError(400, 'User not found.'));
+    if (!user) return next(createError(400, 'Incorrect login.'));
     if (!password) return next(createError(400, 'Password is not set.'));
 
     // Check password:
@@ -32,7 +32,7 @@ apiLoginRouter.post('/', async (req: Request, res: Response, next: NextFunction)
         }
     });
     } else {
-      return next(createError(404, 'Incorrect username/email and/or password.'));
+      return next(createError(404, 'Incorrect login.'));
     }
   } catch (error: any) {
     console.log(error);

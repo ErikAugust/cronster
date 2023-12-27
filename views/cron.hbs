@@ -36,10 +36,30 @@
     </a>
     <!-- /MODULE DIVIDER -->
 
+
+
     <div class="container">
+      
+      <div class="row">
+        <div class="col-sm-4 col-sm-offset-4 logo-splash">
+            <!-- TEAM MEMBER -->
+						<div class="col-sm-12 owl-item">
+							<div class="team-item m-b-sm-40">
+								<img src="{{ user.image }}" alt="{{ user.username }}">
+								<div class="team-inner">
+									<h4 class="team-name">@{{ user.username }}</h4>
+									<p>{{ user.bio }}</p>
+								</div>
+							</div>
+						</div>
+						<!-- /TEAM MEMBER -->
+        </div>
+      </div>
+
+      <hr />
 
       <!-- MODULE TITLE -->
-      <div class="row">
+      <div class="row" style="margin-top: 3em;">
         <div class="col-sm-8 col-sm-offset-2 logo-splash">
           <h3 class="logo"><span style="vertical-align: -4px; margin-right: -4px;" class="material-icons">schedule</span>
             Cronster</h3>

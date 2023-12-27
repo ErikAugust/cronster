@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 import createError from 'http-errors';
 
-import { createCron, getCronsByUserId, deleteCron } from '../../shared/cron';
+import { createCron, getCronsByUserId, deleteCron, getCronById } from '../../shared/cron';
 import { uploadDataUrl } from '../../shared/image';
 import { User } from '../../entity/user.entity';
 
@@ -26,6 +26,38 @@ apiCronsRouter.get('/me', passport.authenticate('jwt', { session: false }), asyn
   } catch (error: any) {
     console.log(error);
     res.status(500).json({ message: error.message });
+  }
+});
+
+
+apiCronsRouter.put('/:id', passport.authenticate('jwt', { session: false }), async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return next(createError(401));
+
+    const id = parseInt(req.params.id);
+    if (!id) return next(createError(400));
+
+    const cron = await getCronById(id, userId);
+    if (!cron) return next(createError(404));
+    
+    const updated = req.body.cron;
+    if (!updated) return next(createError(400, 'Cron is not set'));
+
+    if (!updated.image) {
+      delete updated.image;
+    } else {
+      updated.image = (await uploadDataUrl(updated.image)).secure_url;
+    }
+
+    Object.assign(cron, updated);
+    await cron.save();
+
+    res.json({ cron: cron, success: true });
+
+  } catch (error: any) {
+    console.log(error);
+    return next(createError(500, error.message));
   }
 });
 
