@@ -25,6 +25,7 @@ indexRouter.get('/@:username', async (req: Request, res: Response, next: NextFun
   res.render('profile', { 
     ...user,
     title: `Profile for @${username}`, 
+    description: `${user.bio}`,
     username,
     layout: 'default.hbs'
    });
