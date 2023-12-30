@@ -1,3 +1,4 @@
+import moment from "moment";
 import { User } from "../entity/user.entity";
 import { passwordStrength } from 'check-password-strength';
 
@@ -51,6 +52,25 @@ export async function getByEmailOrUsername(emailOrUsername: string) {
       where: { username: formatUsername(emailOrUsername) }
     });
   }
+}
+
+export async function getProfile(username: string) {
+  const user = await User.findOne({
+    relations: { crons: true },
+    where: { username: username }
+  });
+
+  // Filter out private crons:
+  if (!user) return null;
+
+  if (user.crons && user.crons.length > 0) {
+    user.crons = user.crons.filter(cron => cron.public === true && cron.deleted === false);
+    user.crons.forEach(cron => {
+      cron.date = moment(cron.datetime).format('MMMM Do YYYY');
+    });
+  }
+
+  return user;
 }
 
 export async function emailExists(email: string) {

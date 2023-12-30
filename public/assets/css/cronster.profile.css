@@ -1,0 +1,25 @@
+.image-overlay {
+  color: rgba(32,37,42,.85);
+  font-weight: bold;
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.responsive {
+  width: 100%;
+  height: auto;
+}
+
+.image-container {
+  position: relative;
+}
+
+.count {
+  font-size: 15px;
+}
+
+.img {
+  opacity: 0.3;
+}

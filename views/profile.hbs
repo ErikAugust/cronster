@@ -5,7 +5,23 @@
 
     {{> default/sidebar }}
 
-    {{> default/profile-header }}
+    <!-- BEGIN #content -->
+		<div id="content" class="app-content p-0">
+      {{> default/profile-header }}
+
+      <div class="profile-content">
+				<!-- BEGIN tab-content -->
+				<div class="tab-content p-0">
+          
+            {{> default/profile-crons }}
+
+            {{> default/profile-about }}
+        </div>
+
+      </div>
+    </div>
+
+    
 
 		<!-- BEGIN scroll-top-btn -->
 		<a href="javascript:;" class="btn btn-icon btn-circle btn-theme btn-scroll-to-top" data-toggle="scroll-to-top"><i class="fa fa-angle-up"></i></a>

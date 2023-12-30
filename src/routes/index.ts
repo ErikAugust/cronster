@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { User } from '../entity/user.entity';
-import { getByEmailOrUsername } from '../shared/user';
+import { getByEmailOrUsername, getProfile} from '../shared/user';
 import createError from 'http-errors';
 import { getCronBySlug } from '../shared/cron';
 import moment from 'moment';
@@ -17,8 +17,7 @@ indexRouter.get('/@:username', async (req: Request, res: Response, next: NextFun
   const params = req.params;
   const username = params.username;
 
-  const user = await getByEmailOrUsername(username);
-
+  const user = await getProfile(username);
   if (!user) {
     return next(createError(404, 'No user found'));
   }

@@ -36,5 +36,7 @@ export class Cron extends BaseEntity {
     @ManyToOne(() => User, (user) => user.crons)
     user?: User
 
+    date?: string;
+
 
 }
