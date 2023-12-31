@@ -6,7 +6,12 @@
 
 <div class="wrapper">
   <!-- HERO -->
-  <section id="hero" class="module-hero overlay-light" data-background="{{ image }}">
+  <section id="hero"
+    {{#if confetti}}
+    onclick="confetti()" 
+    {{/if}}
+    class="module-hero overlay-light" 
+    data-background="{{ image }}">
 
     <!-- HERO TEXT -->
     <div class="hero-caption">
@@ -44,13 +49,15 @@
         <div class="col-sm-4 col-sm-offset-4 logo-splash">
             <!-- TEAM MEMBER -->
 						<div class="col-sm-12 owl-item">
-							<div class="team-item m-b-sm-40">
-								<img src="{{ user.image }}" alt="{{ user.username }}">
-								<div class="team-inner">
-									<h4 class="team-name">@{{ user.username }}</h4>
-									<p>{{ user.bio }}</p>
-								</div>
-							</div>
+              <a href="/@{{ user.username }}" style="color: #222222;">
+                <div class="team-item m-b-sm-40">
+                  <img src="{{ user.image }}" alt="{{ user.username }}">
+                  <div class="team-inner">
+                    <h4 class="team-name">@{{ user.username }}</h4>
+                    <p>{{ user.bio }}</p>
+                  </div>
+                </div>
+              </a>
 						</div>
 						<!-- /TEAM MEMBER -->
         </div>
@@ -74,3 +81,14 @@
   <!-- /SERVICES -->
 
 </div>
+
+{{#if confetti}}
+	<script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/tsparticles.confetti.bundle.min.js"></script>
+	<script>
+		confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+    });
+	</script>
+{{/if}}
