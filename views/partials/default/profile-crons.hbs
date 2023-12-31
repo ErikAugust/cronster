@@ -1,12 +1,11 @@
 <div class="tab-pane fade show active" id="profile-crons">
 <!-- BEGIN #gallery -->
 <div id="gallery" class="gallery">
-
   {{#each crons}}
   <!-- BEGIN image -->
   <div class="image gallery-group-1">
     <div class="image-inner">
-      <a href="#" data-lightbox="gallery-group-1">
+      <a href="/@{{ ../username }}/{{ this.slug }}" data-lightbox="gallery-group-1">
         <div class="img" style="background-image: url({{ this.image }})"></div>
         <div class="countdown-timer image-overlay text-center count" data-datetime="{{ this.datetime }}">
           <p class="days"></p>
