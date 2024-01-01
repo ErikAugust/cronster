@@ -40,7 +40,7 @@ apiCronsRouter.put('/:id', passport.authenticate('jwt', { session: false }), asy
 
     const cron = await getCronById(id, userId);
     if (!cron) return next(createError(404));
-    
+
     const updated = req.body.cron;
     if (!updated) return next(createError(400, 'Cron is not set'));
 
@@ -96,8 +96,14 @@ apiCronsRouter.post('/', passport.authenticate('jwt', { session: false }), async
     const cron = req.body.cron;
     if (!cron) return next(createError(400, 'Cron is not set'));
 
-    cron.image = (await uploadDataUrl(cron.image)).secure_url;
+    if (cron.image) {
+      cron.image = (await uploadDataUrl(cron.image)).secure_url;
+    } else {
+      // Fallback to default background image:
+      cron.image = 'https://res.cloudinary.com/dlbanxk4a/image/upload/v1704056637/uhpqo74n5pfawj78gxlx.png';
+    }
 
+    // TODO: Check if slug exists, if so, append a number to the end of it:
     const slug = require('slug');
     cron.slug = slug(cron.title);
 
