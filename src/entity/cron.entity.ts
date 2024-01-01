@@ -41,6 +41,8 @@ export class Cron extends BaseEntity {
 
     date?: string;
 
+    sharedImage?: string;
+
 
 
 
