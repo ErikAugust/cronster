@@ -51,7 +51,7 @@ apiUsersRouter.get('/me', passport.authenticate('jwt', { session: false }), asyn
  */
 apiUsersRouter.post('/', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    let { email, password, username } = req.body;
+    let { email, password, username } = req.body.user;
 
     if (!email) return next(createError(400, 'Email is not set.'));
     if (!username) return next(createError(400, 'Username is not set.'));
@@ -83,12 +83,18 @@ apiUsersRouter.post('/', async (req: Request, res: Response, next: NextFunction)
     user.username = formatUsername(username);
     user.password = hashedPassword;
     user.createdAt = new Date();
+    user.image = user.image || 'https://res.cloudinary.com/dlbanxk4a/image/upload/v1704059789/user-default_xkfhfh.png';
     await user.save();
 
     // Generate JWT:
     const token = generateToken({ id: user.id, email: user.email }, '60d');
 
-    res.json({ message: 'User created successfully!', token });
+    res.json({ message: 'User created successfully!', user: {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      token
+    } });
   } catch (error: any) {
     console.log(error);
     res.status(500).json({ message: error.message });
