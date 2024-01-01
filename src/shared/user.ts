@@ -14,6 +14,13 @@ export async function verifyPassword(password: string | undefined, hash: string 
   return await bcrypt.compare(password, hash);
 }
 
+export async function getAllById(id: number) {
+  return await User.findOne({
+    where: { id }
+  });
+}
+
+
 export async function getById(id: number, properties: any) {
   return await User.findOne({
     select: properties,

@@ -28,6 +28,7 @@ apiLoginRouter.post('/', async (req: Request, res: Response, next: NextFunction)
           id: user.id,
           email: user.email,
           username: user.username,
+          bio: user.bio,
           token
         }
     });

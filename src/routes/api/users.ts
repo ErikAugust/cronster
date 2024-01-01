@@ -9,7 +9,8 @@ import {
   usernameExists,
   hashPassword,
   formatUsername,
-  getById
+  getById,
+  getAllById
 } from '../../shared/user';
 
 import { generateToken } from '../../shared/jwt';
@@ -28,7 +29,7 @@ apiUsersRouter.get('/me', passport.authenticate('jwt', { session: false }), asyn
     if (!userId) return next(createError(400, 'User is not set'));
 
     // Get user from database: 
-    const user = await getById(userId, { username: true, email: true, createdAt: true });
+    const user = await getById(userId, { username: true, email: true, createdAt: true, bio: true });
 
     res.json({
       success: true,
@@ -44,6 +45,40 @@ apiUsersRouter.get('/me', passport.authenticate('jwt', { session: false }), asyn
   }
 });
 
+apiUsersRouter.put('/', passport.authenticate('jwt', { session: false }), async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return next(createError(400, 'User is not set'));
+
+    // Get user from database: 
+    const user = await getAllById(userId);
+
+    if (!user) {
+      return next(createError(404, 'User not found.'));
+    }
+    44
+    // Update user:
+    if (req.body.username) user.username = req.body.username;
+    if (req.body.email) user.email = req.body.email;
+    if (req.body.bio) user.bio = req.body.bio;
+    if (req.body.image) user.image = req.body.image;
+
+    await user.save();
+
+    res.json({
+      success: true,
+      user: {
+        ...user,
+        token: req.headers.authorization?.replace('Bearer ', '')
+      } 
+    
+    });
+  } catch (error: any) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+
+});
 
 /**
  * POST /api/users
@@ -51,7 +86,7 @@ apiUsersRouter.get('/me', passport.authenticate('jwt', { session: false }), asyn
  */
 apiUsersRouter.post('/', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    let { email, password, username } = req.body;
+    let { email, password, username } = req.body.user;
 
     if (!email) return next(createError(400, 'Email is not set.'));
     if (!username) return next(createError(400, 'Username is not set.'));
@@ -83,12 +118,18 @@ apiUsersRouter.post('/', async (req: Request, res: Response, next: NextFunction)
     user.username = formatUsername(username);
     user.password = hashedPassword;
     user.createdAt = new Date();
+    user.image = user.image || 'https://res.cloudinary.com/dlbanxk4a/image/upload/v1704059789/user-default_xkfhfh.png';
     await user.save();
 
     // Generate JWT:
     const token = generateToken({ id: user.id, email: user.email }, '60d');
 
-    res.json({ message: 'User created successfully!', token });
+    res.json({ message: 'User created successfully!', user: {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      token
+    } });
   } catch (error: any) {
     console.log(error);
     res.status(500).json({ message: error.message });
