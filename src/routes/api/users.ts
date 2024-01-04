@@ -14,6 +14,7 @@ import {
 } from '../../shared/user';
 
 import { generateToken } from '../../shared/jwt';
+import { uploadDataUrl } from '../../shared/image';
 
 export interface UserRequest extends Request {
   user?: {
@@ -29,7 +30,7 @@ apiUsersRouter.get('/me', passport.authenticate('jwt', { session: false }), asyn
     if (!userId) return next(createError(400, 'User is not set'));
 
     // Get user from database: 
-    const user = await getById(userId, { username: true, email: true, createdAt: true, bio: true });
+    const user = await getById(userId, { username: true, email: true, createdAt: true, bio: true, image: true });
 
     res.json({
       success: true,
@@ -56,13 +57,17 @@ apiUsersRouter.put('/', passport.authenticate('jwt', { session: false }), async 
     if (!user) {
       return next(createError(404, 'User not found.'));
     }
-    44
     // Update user:
     if (req.body.username) user.username = req.body.username;
     if (req.body.email) user.email = req.body.email;
     if (req.body.bio) user.bio = req.body.bio;
-    if (req.body.image) user.image = req.body.image;
-
+    
+    if (!req.body.image) {
+      delete req.body.image;
+    } else {
+      user.image = (await uploadDataUrl(req.body.image)).secure_url;
+    }
+    
     await user.save();
 
     res.json({
