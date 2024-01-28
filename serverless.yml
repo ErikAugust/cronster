@@ -1,6 +1,7 @@
 service: cronster-aws-lambda
 plugins:
  - serverless-offline
+ - serverless-plugin-common-excludes
 provider:
   name: aws
   runtime: nodejs18.x
