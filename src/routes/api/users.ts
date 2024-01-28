@@ -46,6 +46,27 @@ apiUsersRouter.get('/me', passport.authenticate('jwt', { session: false }), asyn
   }
 });
 
+apiUsersRouter.get('/me/profile', passport.authenticate('jwt', { session: false }), async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return next(createError(400, 'User is not set'));
+
+    // Get user from database: 
+    const user = await getById(userId, { username: true, email: true, createdAt: true, bio: true, image: true });
+
+    res.json({
+      success: true,
+      profile: {
+        ...user
+      } 
+    
+    });
+  } catch (error: any) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 apiUsersRouter.put('/', passport.authenticate('jwt', { session: false }), async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userId = req.user?.id;
@@ -67,14 +88,17 @@ apiUsersRouter.put('/', passport.authenticate('jwt', { session: false }), async 
     } else {
       user.image = (await uploadDataUrl(req.body.image)).secure_url;
     }
-    
+
     await user.save();
 
     res.json({
       success: true,
-      user: {
-        ...user,
-        token: req.headers.authorization?.replace('Bearer ', '')
+      profile: {
+        image: user.image,
+        username: user.username,
+        email: user.email,
+        bio: user.bio,
+        createdAt: user.createdAt
       } 
     
     });
