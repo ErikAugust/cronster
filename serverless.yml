@@ -1,0 +1,10 @@
+service: cronster-aws-lambda
+plugins:
+ - serverless-offline
+provider:
+  name: aws
+  runtime: nodejs18.x
+functions:
+  tweet-random-cron:
+    handler: dist/serverless/tweet-random-cron.handler
+    environment: ${file(serverless.env.${opt:stage, self:provider.stage}.json)}
