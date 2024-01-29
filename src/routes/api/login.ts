@@ -29,7 +29,8 @@ apiLoginRouter.post('/', async (req: Request, res: Response, next: NextFunction)
           email: user.email,
           username: user.username,
           bio: user.bio,
-          token
+          token,
+          image: user.image
         }
     });
     } else {

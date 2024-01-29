@@ -157,6 +157,7 @@ apiUsersRouter.post('/', async (req: Request, res: Response, next: NextFunction)
       id: user.id,
       email: user.email,
       username: user.username,
+      image: user.image,
       token
     } });
   } catch (error: any) {
