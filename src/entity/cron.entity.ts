@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany } from 'typeorm';
 import { User } from './user.entity';
+import { CronPost } from './cron-post.entity';
 
 @Entity('Crons')
 export class Cron extends BaseEntity {
@@ -38,6 +39,9 @@ export class Cron extends BaseEntity {
 
     @ManyToOne(() => User, (user) => user.crons)
     user?: User
+
+    @OneToMany(() => CronPost, (post) => post.cron)
+    posts?: CronPost[]
 
     date?: string;
 
