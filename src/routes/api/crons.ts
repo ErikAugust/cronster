@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 import createError from 'http-errors';
 
-import { createCron, getCronsByUserId, deleteCron, getCronById } from '../../shared/cron';
+import { createCron, createCronPost, getCronsByUserId, deleteCron, getCronById } from '../../shared/cron';
 import { uploadDataUrl } from '../../shared/image';
 import { User } from '../../entity/user.entity';
 
@@ -83,6 +83,45 @@ apiCronsRouter.delete('/:id', passport.authenticate('jwt', { session: false }), 
     console.log(error);
     return next(createError(500, error.message));
   }
+});
+
+apiCronsRouter.post('/:id/posts', passport.authenticate('jwt', { session: false }), async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return next(createError(400, 'User is not set'));
+
+    const cronId = req.params.id;
+    if (!cronId) return next(createError(400, 'Cron ID is not set'));
+
+    const cron = await getCronById(parseInt(cronId), userId);
+    if (!cron) return next(createError(404, 'Cron not found'));
+
+    const post = req.body.post;
+    if (!post) return next(createError(400, 'Post is not set'));
+
+    if (post.image) {
+      post.image = (await uploadDataUrl(post.image)).secure_url;
+    } else {
+      // Fallback to default background image:
+      post.image = 'https://res.cloudinary.com/dlbanxk4a/image/upload/v1704056637/uhpqo74n5pfawj78gxlx.png';
+    }
+
+    const metadata = await createCronPost(post, cron);
+    delete metadata.cron;
+
+    res.json({
+      post: {
+        ...metadata,
+        ...post,
+      },
+      success: true
+    });
+
+  } catch (error: any) {
+    console.log(error);
+    return next(createError(500, error.message));
+  }
+
 });
 
 apiCronsRouter.post('/', passport.authenticate('jwt', { session: false }), async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {

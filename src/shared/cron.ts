@@ -1,5 +1,7 @@
 import { Cron } from '../entity/cron.entity';
 import { User } from '../entity/user.entity';
+import { CronPost } from '../entity/cron-post.entity';
+
 import moment from 'moment';
 
 interface CreateCronInterface {
@@ -11,6 +13,11 @@ interface CreateCronInterface {
   deleted: boolean;
   public: boolean;
   slug: string;
+}
+
+interface CreateCronPostInterface {
+  body: string;
+  image: string;
 }
 
 export async function deleteCron(id: number, userId: number) {
@@ -28,8 +35,19 @@ export async function createCron(cron: CreateCronInterface, user: User) {
   }).save();
 }
 
+export async function createCronPost(post: CreateCronPostInterface, cron: Cron) {
+  return await CronPost.create({
+    ...post,
+    createdAt: new Date(),
+    active: true,
+    deleted: false,
+    public: true,
+    cron: cron
+  }).save();
+}
+
 export async function getCronById(id: number, userId: number): Promise<Cron | null> {
-  const cron = await Cron.findOne({ where: { id, user: { id: userId } }});
+  const cron = await Cron.findOne({ relations: { posts: true }, where: { id, user: { id: userId } }});
   return cron || null;
 }
 
@@ -45,7 +63,7 @@ export async function getCronBySlug(slug: string, userId: number, isPublic: bool
 }
 
 export async function getCronsByUserId(userId: number): Promise<Cron[]> {
-  const results = await Cron.find({ where: { user: { id: userId }, deleted: false }});
+  const results = await Cron.find({ relations: { posts: true }, where: { user: { id: userId }, deleted: false }});
   return results || [];
 }
 
